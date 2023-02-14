@@ -1,0 +1,119 @@
+<head>
+	<title>Customers</title>
+	<!-- <link href="style.css" rel="stylesheet" type="text/css" /> -->
+	<script language="JavaScript">
+	function showform(dowhat) {
+		/*
+		 * four DIVS: browse, insert, update, delete
+		 * this function sets one visible the others not
+		 */
+		if(dowhat == 'insert') {
+			document.getElementById('browse').style.display = 'none';
+			document.getElementById('insert').style.display = 'block';
+			document.getElementById('edit').style.display = 'none';
+			document.getElementById('delete').style.display = 'none';
+		} else if(dowhat == 'all') {
+			document.getElementById('browse').style.display = 'block';
+			document.getElementById('insert').style.display = 'block';
+			document.getElementById('edit').style.display = 'block';
+			document.getElementById('delete').style.display = 'block';
+		} else { //by default display browse
+			document.getElementById('browse').style.display = 'block';
+			document.getElementById('insert').style.display = 'none';
+			document.getElementById('edit').style.display = 'none';
+			document.getElementById('delete').style.display = 'none';
+		}
+	}
+	function newCustomer() {
+		showform('insert');
+	}
+	function browseCustomers() {
+		showform('browse');
+	}
+	function showAll() {
+		showform('all');
+	}
+	</script>
+</head>
+<body onload="browseCustomers()">
+    <nav>[ <a href="index.html">Homepage</a> | <a href="customers.html">Customers</a> | <a href="orders.html">Orders</a> | <a href="receipts.html">Receipts</a> | <a href="items.html">Items</a> ]</nav>    
+    <a href="#" onclick="newCustomer()">Create new Customer</a>
+    <div id="browse">
+        <table border = "1" cellpadding="5">
+        <tbody>
+            <tr>
+                <th>customer_num</th>
+                <th>customer_first_name</th>
+                <th>customer_last_name</th>
+                <th>customer_street</th>
+                <th>customer_city</th>
+                <th>customer_state</th>
+                <th>customer_zip</th>
+                <th>customer_phone</th>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td>Jeffery</td>
+                <td>Zoll</td>
+                <td>3946 Stratford Drive</td>
+                <td>Waipahu</td>
+                <td>HI</td>
+                <td>96797</td>
+                <td>808-205-3645</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>Vera</td>
+                <td>Hughes</td>
+                <td>147 Oak Street</td>
+                <td>Syracuse</td>
+                <td>NY</td>
+                <td>13022</td>
+                <td>315-728-4964</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td>William</td>
+                <td>Lewis</td>
+                <td>4409 Apple Lane</td>
+                <td>Holdrege</td>
+                <td>NE</td>
+                <td>68949</td>
+                <td>308-995-8712</td>
+            </tr>
+        </tbody>
+
+    
+        </table>
+    </div>
+    <div id="insert" style="display: none">
+        <form id="insert" action="/customers" method="post">
+            <legend><strong>Add Customer</strong></legend>
+            <fieldset>
+                <label>First Name</label>
+                <input type="text" class="form-control" id="fname" name="fname" pattern="[A-Za-z0-9]{1,45}" placeholder="" required>
+
+                <label>Last Name</label>
+                <input type="text" class="form-control" id="lname" name="lname" pattern="[A-Za-z0-9]{1,45}" placeholder="" required>
+
+                <label>Street</label>
+                <input type="text" class="form-control" id="street" name="street" pattern="[A-Za-z0-9]{1,45}" placeholder="" required>
+
+                <label>City</label>
+                <input type="text" class="form-control" id="city" name="city" pattern="[A-Za-z0-9]{1,45}" placeholder="" required>
+
+                <label>State</label>
+                <input type="text" class="form-control" id="state" name="state" pattern="[A-Za-z0-9]{2}" placeholder="" required>
+
+                <label>Zipcode</label>
+                <input type="text" class="form-control" id="zip" name="zip" pattern="[A-Za-z0-9]{1,10}" placeholder="" required>
+
+                <label>Phone Number</label>
+                <input type="text" class="form-control" id="phonenum" name="phonenum" pattern="[0-9]{1,45}" placeholder="" required>
+            </fieldset>
+            <input type="submit" value="Add Customer" name="Add_Customer" class="btn btn-primary" style="margin:.5rem;">
+			<input class="btn" type="button" value="Cancel" onClick="browseCustomers()"> 
+        </form>
+
+    </div>
+</body>
