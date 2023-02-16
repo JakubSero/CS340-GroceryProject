@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<title>People</title>
+	<title>Receipts</title>
 	<link href="style.css" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" type="text/css" href="style1.css">
 	<script language="JavaScript">
@@ -103,20 +103,20 @@
 <div id="insert">
     <!-- form to INSERT new data into bsg_people-->
     <form id="insertPerson" action="/people" method="post">
-        <legend><strong>Add Item</strong></legend>
+        <legend><strong>Add Receipt</strong></legend>
         <fieldset>
             <!-- placeholder shows ghost text, required forces an input, pattern forces input adherence -->
-            <label for="make">Item Number:</label>
+            <label for="make">Customer Number:</label>
             <input type="text" class="form-control" id="iNum" name="iNum" pattern="[0-9]+" placeholder="" required>
 
-            <label for="make">Item Type:</label>
+            <label for="make">Purchase Date:</label>
             <input type="text" class="form-control" id="iType" name="iType" placeholder="" required>
 
-            <label for="model">Retail Price:</label>
-            <input type="text" class="form-control" id="rPrice" name="rPrice" pattern="[0-9]+" placeholder="" required>
+            <label for="make">Items Purchased:</label>
+            <input type="text" class="form-control" id="iType" name="iType" placeholder="" required>
 
-            <label for="color">Quantity in Stock</label>
-            <input type="text" class="form-control" id="qStock" name="qStock" pattern="[0-9]+" placeholder="" required>
+            <label for="model">Price Paid</label>
+            <input type="text" class="form-control" id="rPrice" name="rPrice" pattern="[0-9]+" placeholder="" required>
         </fieldset>
 
         <!-- Create 'Add Person' and 'Cancel' buttons -->
@@ -127,20 +127,20 @@
 <div id="edit">
     <!-- form to edit data in bsg_people-->
     <form id="editPerson" action="/edit_people/{{data[0].id}}" method="post">
-        <legend><strong>Edit Item</strong></legend>
+        <legend><strong>Edit Receipt</strong></legend>
         <fieldset>
             <!-- placeholder shows ghost text, required forces an input, pattern forces input adherence -->
-            <label for="make">Item Number:</label>
+            <label for="make">Customer Number:</label>
             <input type="text" class="form-control" id="iNum" name="iNum" pattern="[0-9]+" placeholder="" required>
 
-            <label for="make">Item Type:</label>
+            <label for="make">Purchase Date:</label>
+            <input type="text" class="form-control" id="iType" name="iType" placeholder="" required>
+            
+            <label for="make">Items Purchased:</label>
             <input type="text" class="form-control" id="iType" name="iType" placeholder="" required>
 
-            <label for="model">Retail Price:</label>
+            <label for="model">Price Paid</label>
             <input type="text" class="form-control" id="rPrice" name="rPrice" pattern="[0-9]+" placeholder="" required>
-
-            <label for="color">Quantity in Stock</label>
-            <input type="text" class="form-control" id="qStock" name="qStock" pattern="[0-9]+" placeholder="" required>
         </fieldset>
         <input type="submit" value="Save Changes" name="Edit_Item" class="btn btn-primary" style="margin:.5rem;">
             <input class="btn" type="button" value="Cancel" onClick="browsePeople()" style="margin:.5rem;"> 
