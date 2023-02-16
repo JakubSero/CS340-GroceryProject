@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
 	<title>Items</title>
-	<link href="style.css" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" type="text/css" href="style1.css">
 	<script language="JavaScript">
 	function showform(dowhat) {
@@ -40,10 +39,10 @@
 	function newItem() {
 		showform('insert');
 	}
-	function updateItem(pid) {
+	function updateItem(item_num) {
 		showform('update');
 	}
-	function deleteItem(pid) {
+	function deleteItem(item_num) {
 		showform('delete');
 	}
 	function browsePeople() {
@@ -63,15 +62,15 @@
 	<div id="browse">
             <!-- <p>Items List</p> -->
             <div>
-                <table>
-                    <h1 class="com-name">Items</h1>
+                <table border = "1" cellpadding="5">
+                    <h1 class="com-name">Item List</h1>
                     <tdead>
                         <tr>
-                            <td>Update / Delete</td>
-                            <td>item_num</td>
-                            <td>item_type</td>
-                            <td>retail_price</td>
-                            <td>quant_in_stock</td>
+                            <th>Update / Delete</th>
+                            <th>item_num</th>
+                            <th>item_type</th>
+                            <th>retail_price</th>
+                            <th>quant_in_stock</th>
                         </tr>
                     </tdead>
                     <tbody>
@@ -103,8 +102,7 @@
                 <input type="submit" value="Add Item" name="Edit_Item" onClick="newItem()">
             </input2>
             </div>
-        </article>
-    </div>
+
 	</div>	<!-- browse -->
 
 	<div id="insert">
