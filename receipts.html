@@ -63,7 +63,7 @@
                     <tr>
                         <th>Update</th>
                         <th>Receipt ID</th>
-                        <th>FK Customer Number</th>
+                        <th>Customer Phone</th>
                         <th>Purchase Date</th>
                         <th>Items Purchased</th>
                         <th>Price Paid</th>
@@ -73,7 +73,7 @@
                     <tr>
                         <td><a href="#" onClick="updateItem()">Edit</a></td>
                         <td>1</td>
-                        <td>1</td>
+                        <td>808-205-3645</td>
                         <td>2008-04-10</td>
                         <td>Apple</td>
                         <td>63.25</td>
@@ -81,7 +81,7 @@
                     <tr>
                         <td><a href="#" onClick="updateItem()">Edit</a></td>
                         <td>2</td>
-                        <td>2</td>
+                        <td>315-728-4964</td>
                         <td>2008-08-10</td>
                         <td>Bananas</td>
                         <td>666.66</td>
@@ -89,7 +89,7 @@
                     <tr>
                         <td><a href="#" onClick="updateItem()">Edit</a></td>
                         <td>3</td>
-                        <td>3</td>
+                        <td>308-995-8712</td>
                         <td>2008-10-10</td>
                         <td>Honda Civic</td>
                         <td>568.25</td>
@@ -111,12 +111,12 @@
         <fieldset>
             <!-- placeholder shows ghost text, required forces an input, pattern forces input adherence -->
             <label>Customer</label>
-            <select type="text" class="form-control" id="f_customer_num" name="customer_num" pattern="[A-Za-z]{1,45}" placeholder="" required>
-                <option value=NULL>&nbsp;</option>
-                <option value="1">Jeffery Zoll</option>
-                <option value="2">Vera Hughes</option>
-                <option value="3">William Lewis</option>
-            </select>
+            <label>Customer Phone</label>
+                <select type="text" class="form-control" id="customer_phone" name="customer_phone" placeholder="" required>
+                    <option value="1">808-205-3645</option>
+                    <option value="2">315-728-4964</option>
+                    <option value="3">308-995-8712</option>
+                </select>
 
             <label for="make">Purchase Date:</label>
             <input type="text" class="form-control" id="iType" name="iType" placeholder="1900-01-01" required>
@@ -140,16 +140,15 @@
         <legend><strong>Edit Receipt</strong></legend>
         <fieldset>
             <!-- placeholder shows ghost text, required forces an input, pattern forces input adherence -->
-            <label>Customer</label>
-            <select type="text" class="form-control" id="f_customer_num" name="customer_num" pattern="[A-Za-z]{1,45}" placeholder="" required>
-                <option value=NULL>&nbsp;</option>
-                <option value="1">Jeffery Zoll</option>
-                <option value="2">Vera Hughes</option>
-                <option value="3">William Lewis</option>
-            </select>
+            <label>Customer Phone</label>
+                <select type="text" class="form-control" id="customer_phone" name="customer_phone" placeholder="" required>
+                    <option value="1">808-205-3645</option>
+                    <option value="2">315-728-4964</option>
+                    <option value="3">308-995-8712</option>
+                </select>
             
             <label for="make">Purchase Date:</label>
-            <input type="text" class="form-control" id="iType" name="iType" placeholder="1900-01-01" required>
+            <input type="text" class="form-control" id="iType" name="iType" placeholder="yyyy-mm-dd" required>
 
             <label for="make">Items Purchased:</label>
             <input type="text" class="form-control" id="iType" name="iType" placeholder="Type Number" required>
