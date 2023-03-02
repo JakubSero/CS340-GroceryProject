@@ -50,20 +50,30 @@ CREATE OR REPLACE TABLE Items (
 CREATE OR REPLACE TABLE Receipt_Items (
   f_receipt_id INT(11) NOT NULL,
   f_item_num INT(11) NOT NULL,
-  FOREIGN KEY (f_receipt_id) 
-  REFERENCES Receipts(receipt_id) ON DELETE CASCADE,
-  FOREIGN KEY (f_item_num)
-  REFERENCES Items(item_num) ON DELETE CASCADE);
+  CONSTRAINT fk_receipt_id
+    FOREIGN KEY (f_receipt_id) 
+    REFERENCES Receipts(receipt_id)
+    ON DELETE CASCADE,
+  CONSTRAINT fk_item_num
+    FOREIGN KEY (f_item_num)
+    REFERENCES Items(item_num) 
+    ON DELETE CASCADE
+);
 
 
 -- Ordered_Items
 CREATE OR REPLACE TABLE Order_Items (
   f_order_num INT(11) NOT NULL,
   f_item_num INT(11) NOT NULL,
-  FOREIGN KEY (f_order_num)
-  REFERENCES Orders(order_num) ON DELETE CASCADE,
-  FOREIGN KEY (f_item_num)
-  REFERENCES Items (item_num) ON DELETE CASCADE);
+  CONSTRAINT fk_order_num
+    FOREIGN KEY (f_order_num)
+    REFERENCES Orders(order_num) 
+    ON DELETE CASCADE,
+  CONSTRAINT fk_item_num2
+    FOREIGN KEY (f_item_num)
+    REFERENCES Items (item_num) 
+    ON DELETE CASCADE
+);
 
 -- INSERTING DATA --
 -- Inserts data into resepective tables --
