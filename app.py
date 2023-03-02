@@ -39,8 +39,8 @@ def root():
 def customers():
 	query = "SELECT * FROM Customers;"
 	cursor = db.execute_query(db_connection=db_connection, query=query)
-	results = json.dumps(cursor.fetchall())
-	return results
+	results = cursor.fetchall()
+	return render_template("customers.j2", Customers=results)
 
 #@app.route('/orders')
 #def orders():
@@ -50,9 +50,15 @@ def customers():
 # def customers():
 #     return render_template("receipts.html")
 
-# @app.route('/items')
-# def customers():
-#     return render_template("items.html")
+@app.route('/items', methods=["POST", "GET", "UPDATE", "DELETE"])
+def items():
+    if request.method == "GET":
+        query = "SELECT * FROM Items;"
+        cursor = db.execute_query(db_connection=db_connection, query=query)
+        results = cursor.fetchall()
+        return render_template("items.j2", Items=results)
+
+
 
 # @app.route('/order_items')
 # def customers():
