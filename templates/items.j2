@@ -4,7 +4,7 @@
 	<title>Items</title>
     <link rel="stylesheet" type="text/css" href="../static/style1.css">
 	<script language="JavaScript">
-	function showform(dowhat) {
+	function showform(dowhat, id) {
 		/*
 		 * four DIVS: browse, insert, update, delete
 		 * this function sets one visible the others not
@@ -14,16 +14,18 @@
 			document.getElementById('insert').style.display = 'block';
 			document.getElementById('edit').style.display = 'none';
 			document.getElementById('delete').style.display = 'none';
-		} else if(dowhat == 'update') {
+                } else if(dowhat == 'update') {
 			document.getElementById('browse').style.display = 'none';
 			document.getElementById('insert').style.display = 'none';
 			document.getElementById('edit').style.display = 'block';
 			document.getElementById('delete').style.display = 'none';
-		} else if(dowhat == 'delete') {
+		        document.getElementById('update_item_num').value=id;
+                } else if(dowhat == 'delete') {
 			document.getElementById('browse').style.display = 'none';
 			document.getElementById('insert').style.display = 'none';
 			document.getElementById('edit').style.display = 'none';
 			document.getElementById('delete').style.display = 'block';
+                        document.getElementById('delete_item_num').value = id;
 		} else if(dowhat == 'all') {
 			document.getElementById('browse').style.display = 'block';
 			document.getElementById('insert').style.display = 'block';
@@ -39,11 +41,11 @@
 	function newItem() {
 		showform('insert');
 	}
-	function updateItem(item_num) {
-		showform('update');
+        function updateItem(item_num) {
+		showform('update', item_num);
 	}
 	function deleteItem(item_num) {
-		showform('delete');
+		showform('delete',item_num);
 	}
 	function browsePeople() {
 		showform('browse');
@@ -65,20 +67,22 @@
                 <table border = "1" cellpadding="5">
                     <h1 class="com-name">Item List</h1>
                     <tdead>
+                      {% if Items and request.method != 'POST' %}
                         <tr>
                             <th>Edit/Delete</th>
                             {% for key in Items[0].keys() %}
                             <th>{{key}}</th>
                             {% endfor %}                             
-
+                      
                             
                         </tr>
+                       {% endif %}
                     </tdead>
                     <tbody>
                     {% for item in Items %}
                     <tr>
-                        <td><a href="#" onClick="updateItem()">Edit</a> / <a href="#" onClick="deleteItem()">Delete</a></td>
-                        {% for key in Items[1].keys() %}
+                        <td><a href="#" onClick="updateItem({{item.item_num}})">Edit</a> / <a href="#" onClick="deleteItem({{item.item_num}})">Delete</a></td>
+                        {% for key in Items[0].keys() %}
                         <td>{{item[key]}}</td>
                         {% endfor %}  
 
@@ -96,21 +100,21 @@
 
 	<div id="insert">
 		<!-- form to INSERT new data into bsg_people-->
-		<form id="insertPerson" action="/people" method="post">
+		<form id="insertPerson" action="/insert_item" method="post">
 			<legend><strong>Add Item</strong></legend>
             <fieldset>
                 <!-- placeholder shows ghost text, required forces an input, pattern forces input adherence -->
                 <label for="make">Item Number:</label>
-                <input type="text" class="form-control" id="iNum" name="iNum" pattern="[0-9]+" placeholder="" required>
+                <input type="text" class="form-control" id="iNum" name="iNum" pattern="[0-9]+" placeholder="Number id" required>
     
                 <label for="make">Item Type:</label>
-                <input type="text" class="form-control" id="iType" name="iType" placeholder="" required>
+                <input type="text" class="form-control" id="iType" name="iType" placeholder="Item Category" required>
     
                 <label for="model">Retail Price:</label>
-                <input type="text" class="form-control" id="rPrice" name="rPrice" pattern="[0-9]+" placeholder="" required>
+                <input type="text" class="form-control" id="rPrice" name="rPrice" pattern="[0-9.]+" placeholder="Two decimal price" required>
     
                 <label for="color">Quantity in Stock</label>
-                <input type="text" class="form-control" id="qStock" name="qStock" pattern="[0-9]+" placeholder="" required>
+                <input type="text" class="form-control" id="qStock" name="qStock" pattern="[0-9]+" placeholder="Quantity" required>
             </fieldset>
 
             <!-- Create 'Add Person' and 'Cancel' buttons -->
@@ -120,32 +124,33 @@
 	</div><!--insert-->
     <div id="delete">
 		<!-- form to INSERT new data into bsg_people-->
-		<form id="deletePerson" action="/people" method="post">
+		<form id="deleteItem" action="{{ url_for('delete_item') }}" method="post">
 			<legend><strong>Delete Item</strong></legend>
 			<fieldset>
                 <h3>Are you sure you want to delete the Item?</h3>
-                <input type="submit" value="Yes" name="Delete_Item" class="btn btn-primary" style="margin:.5rem;">
-			    <input class="btn" type="button" value="Cancel" onClick="browsePeople()"> 
+                        <input id="delete_item_num" type="hidden" name="item_num" placeholder="Please type the item number"/>
+                        <input type="submit" name="item_num" value="Yes" class="btn btn-primary" style="margin:.5rem;">
+			<input class="btn" type="button" value="Cancel" onClick="browsePeople()"> 
             </fieldset>
         </form>
 	</div><!--insert-->
 	<div id="edit">
 		<!-- form to edit data in bsg_people-->
-		<form id="editPerson" action="/edit_people" method="post">
+		<form id="editPerson" action="/edit_item" method="post">
 			<legend><strong>Edit Item</strong></legend>
             <fieldset>
                 <!-- placeholder shows ghost text, required forces an input, pattern forces input adherence -->
-                <label for="make">Item Number:</label>
-                <input type="text" class="form-control" id="iNum" name="iNum" pattern="[0-9]+" placeholder="" required>
+                
+                <input type="hidden" class="form-control" id="update_item_num" name="iNum" pattern="[0-9]+" placeholder="Number id" required>
     
                 <label for="make">Item Type:</label>
-                <input type="text" class="form-control" id="iType" name="iType" placeholder="" required>
+                <input type="text" class="form-control" id="update_item_type" name="iType" placeholder="Item Category" required>
     
                 <label for="model">Retail Price:</label>
-                <input type="text" class="form-control" id="rPrice" name="rPrice" pattern="[0-9]+" placeholder="" required>
+                <input type="text" class="form-control" id="update_item_price" name="rPrice" pattern="[0-9.]+" placeholder="Price with two decimals" required>
     
                 <label for="color">Quantity in Stock</label>
-                <input type="text" class="form-control" id="qStock" name="qStock" pattern="[0-9]+" placeholder="" required>
+                <input type="text" class="form-control" id="update_item_quant" name="qStock" pattern="[0-9]+" placeholder="Quantity" required>
             </fieldset>
             <input type="submit" value="Save Changes" name="Edit_Item" class="btn btn-primary" style="margin:.5rem;">
 				<input class="btn" type="button" value="Cancel" onClick="browsePeople()" style="margin:.5rem;"> 
