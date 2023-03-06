@@ -1,0 +1,35 @@
+<link rel="stylesheet" type="text/css" href="../static/style1.css">
+<head>
+    <title>Receipt_Items</title>
+</head>
+<body>
+    <nav>[ <a href="/">Homepage</a> | <a href="/customers">Customers</a> | <a href="/orders">Orders</a> | <a href="/receipts">Receipts</a> | <a href="/items">Items</a> | <a href="/order_items">Order_Items</a> | <a href="/receipt_items">Receipt_Items</a>]</nav>
+    <hr>
+    <div>
+        <table border = "1" cellpadding="5">
+                    <h1 class="com-name">Receipt_Items</h1>
+                    <tdead>
+                      {% if R_I and request.method != 'POST' %}
+                        <tr>
+                            {% for key in R_I[0].keys() %}
+                            <th>{{key}}</th>
+                            {% endfor %}                             
+                      
+                            
+                        </tr>
+                       {% endif %}
+                    </tdead>
+                    <tbody>
+                    {% for item in R_I %}
+                    <tr>
+                        {% for key in R_I[0].keys() %}
+                        <td>{{item[key]}}</td>
+                        {% endfor %}  
+
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+        </table>
+
+    </div>
+</body>

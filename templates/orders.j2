@@ -1,0 +1,111 @@
+<link rel="stylesheet" type="text/css" href="../static/style1.css">
+<head>
+	<title>Orders</title>
+	<!-- <link href="style.css" rel="stylesheet" type="text/css" /> -->
+	<script language="JavaScript">
+	function showform(dowhat) {
+		/*
+		 * four DIVS: browse, insert, update, delete
+		 * this function sets one visible the others not
+		 */
+		if(dowhat == 'insert') {
+			document.getElementById('browse').style.display = 'none';
+			document.getElementById('insert').style.display = 'block';
+			document.getElementById('edit').style.display = 'none';
+			document.getElementById('delete').style.display = 'none';
+		} else if(dowhat == 'all') {
+			document.getElementById('browse').style.display = 'block';
+			document.getElementById('insert').style.display = 'block';
+			document.getElementById('edit').style.display = 'block';
+			document.getElementById('delete').style.display = 'block';
+		} else { //by default display browse
+			document.getElementById('browse').style.display = 'block';
+			document.getElementById('insert').style.display = 'none';
+			document.getElementById('edit').style.display = 'none';
+			document.getElementById('delete').style.display = 'none';
+		}
+	}
+	function newOrder() {
+		showform('insert');
+	}
+	function browseOrders() {
+		showform('browse');
+	}
+	function showAll() {
+		showform('all');
+	}
+	</script>
+</head>
+
+<body onload="browseOrders()">
+    <nav>[ <a href="/">Homepage</a> | <a href="/customers">Customers</a> | <a href="/orders">Orders</a> | <a href="/receipts">Receipts</a> | <a href="/items">Items</a> | <a href="/order_items">Order_Items</a> | <a href="/receipt_items">Receipt_Items</a>]</nav>
+    <hr>
+    <div id="browse">
+        <div>
+        <h1 class="com-name">Orders</h1>
+        <table border = "1" cellpadding="5">
+            <tdead> 
+                <tr>
+                    {% for key in Orders[0].keys() %}
+                    <th>{{ key }}</th>
+                    {% endfor %}
+                </tr>
+            </tdead>
+        <tbody>
+            {% for order in Orders %}
+            <tr>
+                 {% for key in order.keys() %}
+                 <td>{{order[key]}}</td>
+                 {% endfor %}
+            </tr>
+            {% endfor %}
+        </tbody>
+        </table>
+        <br>
+        <input2>
+            <input type="submit" value="Add Order" name="Add_Order" onClick="newOrder()">
+        </input2>
+    </div>
+    </div>  
+    <div id="insert" style="display: none">
+        <form id="insertOrder" action="/insert-order" method="post">
+            <legend><strong>Add Order</strong></legend>
+            <fieldset>
+                <label>Order Date</label>
+                <input type="text" class="form-control" id="odate" name="odate" pattern="[0-9-]{1,45}" placeholder="yyyy-mm-dd" required>
+
+                <label>Card Number</label>
+                <input type="text" class="form-control" id="cardnum" name="cardnum" pattern="[0-9]{1,16}" placeholder="16 digits" required>
+
+                <label>Expiration Year</label>
+                <input type="text" class="form-control" id="expyear" name="expyear" pattern="[0-9]{1,3}" placeholder="yy" required>
+
+                <label>Expiration Month</label>
+                <input type="text" class="form-control" id="expmonth" name="expmonth" pattern="[0-9]{1,3}" placeholder="mm" required>
+
+                <label>Order Complete?</label>
+                <select type="text" class="form-control" id="complete?" name="complete?" pattern="[0-1]{1}" placeholder="" required>
+                    <option value="0">Not Complete</option>
+                    <option value="1">Complete</option>
+                </select>
+
+                <label>Picked Up or Shipped?</label>
+                <select type="text" class="form-control" id="pors" name="pors" pattern="[0-1]{1}" placeholder="" required>
+                    <option value="0">Picked Up</option>
+                    <option value="1">Shipped</option>
+                </select>
+
+                <label>Customer Phone</label>
+                <select type="text" class="form-control" method="GET" action="/" id="customer_phone" name="customer_phone" placeholder="xxx-xxx-xxxx" required>
+                    <option value="{{Dropdown[0]['customer_num']}}" selected> {{Dropdown[0]['Phone']}}</option>
+                    {% for result in Dropdown[1:] %}
+                        <option value="{{result['customer_num']}}">{{result['Phone']}}</option>
+                    {% endfor %}
+                </select>
+            </fieldset>
+            <input type="submit" value="Add Order" name="Add_Order" class="btn btn-primary" style="margin:.5rem;">
+			<input class="btn" type="button" value="Cancel" onClick="browseOrders()"> 
+        </form>
+
+    </div>
+</body>
