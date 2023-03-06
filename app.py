@@ -30,9 +30,24 @@ def customers():
 	results = cursor.fetchall()
 	return render_template("customers.j2", Customers=results)
 
-#@app.route('/orders')
-#def orders():
-#	return render_template("orders.html")
+@app.route('/orders', methods=["GET"])
+def orders():
+    if request.method == "GET":
+        query = "SELECT Orders.order_num, Orders.order_date, Orders.card_number, Orders.expiration_year, Orders.expiration_month, Orders.order_complete, Orders.pickup_or_ship, Customers.customer_phone FROM Orders JOIN Customers ON Orders.f_customer_num = Customers.customer_num;"
+        cursor = db.execute_query(db_connection=db_connection, query=query)
+        results = cursor.fetchall()
+
+        query2 = "SELECT Customers.customer_num, Customers.customer_phone AS Phone FROM Customers;"
+        cursor = db.execute_query(db_connection=db_connection, query=query2)
+        results2 = cursor.fetchall()
+        return render_template("orders.j2", Orders=results, Dropdown=results2)
+
+@app.route('/insert-order', methods=["GET", "POST"])        
+def insert_order():        
+        query = "INSERT INTO Orders (f_customer_num, order_date, card_number, expiration_month, expiration_year, order_complete, pickup_or_ship) VALUES (%s, '%s', '%s', %s, %s, %s, %s);" % (request.form['customer_phone'], request.form['odate'], request.form['cardnum'], request.form['expmonth'], request.form['expyear'], request.form['complete?'], request.form['pors'])  
+        cursor = db.execute_query(db_connection=db_connection, query=query)
+        results = cursor.fetchall()
+        return redirect("/orders")
 
 # @app.route('/receipts')
 # def customers():
@@ -85,14 +100,21 @@ def edit_people():
         db_connection.rollback()
         return "Error updating item: " + str(e)
 
-# @app.route('/order_items')
-# def customers():
-#     return render_template("order_items.html")
+@app.route('/order_items', methods=['GET'])
+def order_items():
+    if request.method == "GET":
+        query = "SELECT * FROM Order_Items;"
+        cursor = db.execute_query(db_connection=db_connection, query=query)
+        results = cursor.fetchall()
+    return render_template("order_items.j2", O_I=results)
 
-# @app.route('/receipt_items')
-# def customers():
-#     return render_template("receipt_items.html")
-
+@app.route('/receipt_items', methods=['GET'])
+def receipt_items():
+    if request.method == "GET":
+        query = "SELECT * FROM Receipt_Items;"
+        cursor = db.execute_query(db_connection=db_connection, query=query)
+        results = cursor.fetchall()
+    return render_template("receipt_items.j2", R_I=results)
 
 # Listener
 if __name__ == "__main__":
