@@ -6,88 +6,194 @@ import database.db_connector as db
 
 app = Flask(__name__)
 
-app.config['MYSQL_HOST'] = 'classmysql.engr.oregonstate.edu'
-app.config['MYSQL_USER'] = 'cs340_kowaljak'
-app.config['MYSQL_PASSWORD'] = '2811' #last 4 of onid
-app.config['MYSQL_DB'] = 'cs340_kowaljak'
-app.config['MYSQL_CURSORCLASS'] = "DictCursor"
+#app.config['MYSQL_HOST'] = 'classmysql.engr.oregonstate.edu'
+#app.config['MYSQL_USER'] = 'cs340_kowaljak'
+#app.config['MYSQL_PASSWORD'] = '2811' #last 4 of onid
+#app.config['MYSQL_DB'] = 'cs340_kowaljak'
+#app.config['MYSQL_CURSORCLASS'] = "DictCursor"
 
 
-mysql = MySQL(app)
+#mysql = MySQL(app)
 
-db_connection = db.connect_to_database()
+#db_connection = db.connect_to_database()
 
 # Routes
 @app.route('/')
 def root():
 	return render_template("index.html")	
 
-
 @app.route('/customers')
 def customers():
-	query = "SELECT * FROM Customers;"
-	cursor = db.execute_query(db_connection=db_connection, query=query)
-	results = cursor.fetchall()
-	return render_template("customers.j2", Customers=results)
+        db_connection = db.connect_to_database()
+
+        query = "SELECT * FROM Customers;"
+        cursor = db.execute_query(db_connection=db_connection, query=query)
+        results = cursor.fetchall()
+        cursor.close()
+        db_connection.close()
+        return render_template("customers.j2", Customers=results)
+
+@app.route('/insert_customer', methods=["POST"])
+def create_customer():
+    db_connection = db.connect_to_database()
+
+    customer_num = request.form["customer_num"]
+    customer_first_name = request.form["customer_first_name"]
+    customer_last_name = request.form["customer_last_name"]
+    customer_street = request.form["customer_street"]
+    customer_city = request.form["customer_city"]
+    customer_state = request.form["customer_state"]
+    customer_zip = request.form["customer_zip"]
+    customer_phone = request.form["customer_phone"]
+
+    query = f"INSERT INTO Customers (customer_num, customer_first_name, customer_last_name, customer_street, customer_city, customer_state, customer_zip, customer_phone) VALUES ({customer_num}, '{customer_first_name}', '{customer_last_name}', '{customer_street}', '{customer_city}', '{customer_state}', '{customer_zip}', '{customer_phone}');"
+    try:
+        db.execute_query(db_connection=db_connection, query=query)
+        db_connection.close()
+        return redirect("/customers")
+    except Exception as e:
+        db_connection.rollback()
+        db_connection.close()
+
+        return "Error creating Customer: " + str(e)
 
 @app.route('/orders', methods=["GET"])
 def orders():
     if request.method == "GET":
+        db_connection = db.connect_to_database()
         query = "SELECT Orders.order_num, Orders.order_date, Orders.card_number, Orders.expiration_year, Orders.expiration_month, Orders.order_complete, Orders.pickup_or_ship, Customers.customer_phone FROM Orders JOIN Customers ON Orders.f_customer_num = Customers.customer_num;"
         cursor = db.execute_query(db_connection=db_connection, query=query)
-        results = cursor.fetchall()
-
+        results = cursor.fetchall() 
+        cursor.close()
+        
         query2 = "SELECT Customers.customer_num, Customers.customer_phone AS Phone FROM Customers;"
         cursor = db.execute_query(db_connection=db_connection, query=query2)
         results2 = cursor.fetchall()
+        cursor.close()
+        db_connection.close()
+
         return render_template("orders.j2", Orders=results, Dropdown=results2)
 
 @app.route('/insert-order', methods=["GET", "POST"])        
-def insert_order():        
+def insert_order():
+        db_connection = db.connect_to_database()        
         query = "INSERT INTO Orders (f_customer_num, order_date, card_number, expiration_month, expiration_year, order_complete, pickup_or_ship) VALUES (%s, '%s', '%s', %s, %s, %s, %s);" % (request.form['customer_phone'], request.form['odate'], request.form['cardnum'], request.form['expmonth'], request.form['expyear'], request.form['complete?'], request.form['pors'])  
         cursor = db.execute_query(db_connection=db_connection, query=query)
-        results = cursor.fetchall()
+        # results = cursor.fetchall()
+        cursor.close()
+        db_connection.close()
+
         return redirect("/orders")
 
-# @app.route('/receipts')
-# def customers():
-#     return render_template("receipts.html")
+@app.route('/receipts', methods=["GET"])
+def receipts():
+    try:
+        if request.method == "GET":
+            db_connection = db.connect_to_database()
+            query = "SELECT * FROM Receipts;"
+            cursor = db.execute_query(db_connection=db_connection, query=query)
+            results = cursor.fetchall()
+            cursor.close()
+            
+            query2 = "SELECT Customers.customer_num, Customers.customer_phone AS Phone FROM Customers;"
+            cursor = db.execute_query(db_connection=db_connection, query=query2)
+            results2 = cursor.fetchall()
+            cursor.close()
+            db_connection.close()
+
+            return render_template("/receipts.j2", Receipts=results, Dropdown=results2)
+    except Exception as e:
+        print("Error executing SQL query: ", e)
+        return "Error executing SQL query: " + str(e)
+
+@app.route('/insert_receipt', methods=["POST", "GET"])
+def create_receipt():
+    db_connection = db.connect_to_database()
+    receipt_id = request.form["receipt_id"]
+    purchase_date = request.form["purchase_date"]
+    items_purchased = request.form["items_purchased"]
+    price_paid = request.form["price_paid"]
+    f_customer_num = request.form["customer_phone"]
+    query = f"INSERT INTO Receipts ( purchase_date, items_purchased, price_paid, f_customer_num) VALUES ('{purchase_date}', '{items_purchased}', {price_paid}, {f_customer_num});"
+
+    try:
+        db.execute_query(db_connection=db_connection, query=query)
+        db_connection.close()
+
+        return redirect("/receipts")
+    except Exception as e:
+        db_connection.rollback()
+        db_connection.close()
+
+        return "Error creating receipt: " + str(e)
+
+
+@app.route('/edit_receipt', methods=['POST'])
+def edit_receipt():
+    db_connection = db.connect_to_database()
+    receipt_id = request.form["receipt_id"]
+    purchase_date = request.form["purchase_date"]
+    items_purchased = request.form["items_purchased"]
+    price_paid = request.form["price_paid"]
+    f_customer_num = request.form["customer_phone"]
+    query = f"UPDATE Receipts SET purchase_date='{purchase_date}', items_purchased='{items_purchased}', price_paid={price_paid}, f_customer_num={f_customer_num} WHERE receipt_id={receipt_id};"
+    try:
+        db.execute_query(db_connection=db_connection, query=query)
+        # return query
+        db_connection.close()
+
+        return redirect('/receipts')
+    except Exception as e:
+        db_connection.rollback()
+        db_connection.close()
+
+        return "Error updating receipt: " + str(e)
 
 @app.route('/items', methods=["POST", "GET", "UPDATE"])
 def items():
     if request.method == "GET":
+        db_connection = db.connect_to_database()
         query = "SELECT * FROM Items;"
         cursor = db.execute_query(db_connection=db_connection, query=query)
         results = cursor.fetchall()
+        cursor.close()
+        db_connection.close()
+
         return render_template("items.j2", Items=results)
 
 @app.route("/delete_item", methods=["POST", "GET", "DELETE"])
 def delete_item():
-    #pre_query = "SET foreign_key_checks = 0;"
+    db_connection = db.connect_to_database()
     query = "DELETE FROM Items WHERE item_num = '%s';" % request.form['item_num']
-    #after = "SET foreign_key_checks = 1;"
-    #check = db.execute_query(db_connection=db_connection, query=pre_query)
     cur = db.execute_query(db_connection=db_connection, query=query)
-    #check2 = db.execute_query(db_connection=db_connection, query=after)
+    cur.close()
+    db_connection.close()
+
     return redirect("/items")
 
 @app.route('/insert_item', methods=["POST"])
 def insert_item():
-    item_num = request.form["iNum"]
+    db_connection = db.connect_to_database()
+    # item_num = request.form["iNum"]
     item_type = request.form["iType"]
     retail_price = request.form["rPrice"]
     quant_in_stock = request.form["qStock"]
-    query = f"INSERT INTO Items (item_num, item_type, retail_price, quant_in_stock) VALUES ({item_num}, '{item_type}', {retail_price}, {quant_in_stock});"
+    query = f"INSERT INTO Items (item_type, retail_price, quant_in_stock) VALUES ('{item_type}', {retail_price}, {quant_in_stock});"
 
     try:
         db.execute_query(db_connection=db_connection, query=query)
+        db_connection.close()
+
         return redirect("/items")
     except Exception as e:
         db_connection.rollback()
+        db_connection.close()
+
         return "Error creating item: " + str(e)
 
 @app.route('/edit_item', methods=['POST'])
 def edit_people():
+    db_connection = db.connect_to_database()
     iNum = request.form['iNum']
     iType = request.form['iType']
     rPrice = request.form['rPrice']
@@ -95,25 +201,37 @@ def edit_people():
     query = f"UPDATE Items SET item_type='{iType}', retail_price={rPrice}, quant_in_stock={qStock} WHERE item_num={iNum};"
     try:
         db.execute_query(db_connection=db_connection, query=query)
+        db_connection.close()
+
         return redirect('/items')
     except Exception as e:
         db_connection.rollback()
+        db_connection.close()
+
         return "Error updating item: " + str(e)
 
 @app.route('/order_items', methods=['GET'])
 def order_items():
     if request.method == "GET":
+        db_connection = db.connect_to_database()
         query = "SELECT * FROM Order_Items;"
         cursor = db.execute_query(db_connection=db_connection, query=query)
         results = cursor.fetchall()
+        cursor.close()
+        db_connection.close()
+
     return render_template("order_items.j2", O_I=results)
 
 @app.route('/receipt_items', methods=['GET'])
 def receipt_items():
     if request.method == "GET":
+        db_connection = db.connect_to_database()
         query = "SELECT * FROM Receipt_Items;"
         cursor = db.execute_query(db_connection=db_connection, query=query)
         results = cursor.fetchall()
+        cursor.close()
+        db_connection.close()
+
     return render_template("receipt_items.j2", R_I=results)
 
 # Listener
