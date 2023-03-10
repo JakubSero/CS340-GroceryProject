@@ -126,7 +126,7 @@
 	<div id="edit">
 		<!-- form to edit data in bsg_people-->
 		<form id="edit_receipt" action="/edit_receipt" method="POST">
-			<legend><strong>Edit Item</strong></legend>
+			<legend><strong>Edit Receipt</strong></legend>
             <fieldset>
                     <!-- placeholder shows ghost text, required forces an input, pattern forces input adherence -->
                     <label>Customer Phone</label>
@@ -142,7 +142,7 @@
                     <input type="text" class="form-control" id="update_receipt_date" name="purchase_date" pattern="[0-9-]{1,45}" placeholder="" required>
 
                     <label for="model">Items Purchased:</label>
-                    <input type="text" class="form-control" id="update_receipt_items" name="items_purchased" pattern="[A-Za-z\p{P} ]+" placeholder="" required>
+                    <input type="text" class="form-control" id="update_receipt_items" name="items_purchased" pattern="[A-Za-z'\p{P}0-9 ]+" placeholder="" required>
 
                     <label for="color">Price Paid</label>
                     <input type="text" class="form-control" id="update_receipt_price" name="price_paid" pattern="[0-9.]+" placeholder="" required>
