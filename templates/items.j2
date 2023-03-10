@@ -4,7 +4,7 @@
 	<title>Items</title>
     <link rel="stylesheet" type="text/css" href="../static/style1.css">
 	<script language="JavaScript">
-	function showform(dowhat, id) {
+	function showform(dowhat, id, type, price, quant) {
 		/*
 		 * four DIVS: browse, insert, update, delete
 		 * this function sets one visible the others not
@@ -20,6 +20,9 @@
 			document.getElementById('edit').style.display = 'block';
 			document.getElementById('delete').style.display = 'none';
 		        document.getElementById('update_item_num').value=id;
+                        document.getElementById('update_item_type').value=type;
+                        document.getElementById('update_item_price').value=price;
+                        document.getElementById('update_item_quant').value=quant;
                 } else if(dowhat == 'delete') {
 			document.getElementById('browse').style.display = 'none';
 			document.getElementById('insert').style.display = 'none';
@@ -41,8 +44,8 @@
 	function newItem() {
 		showform('insert');
 	}
-        function updateItem(item_num) {
-		showform('update', item_num);
+        function updateItem(item_num, item_type, retail_price, quant) {
+		showform('update', item_num, item_type, retail_price, quant);
 	}
 	function deleteItem(item_num) {
 		showform('delete',item_num);
@@ -81,7 +84,7 @@
                     <tbody>
                     {% for item in Items %}
                     <tr>
-                        <td><a href="#" onClick="updateItem({{item.item_num}})">Edit</a> / <a href="#" onClick="deleteItem({{item.item_num}})">Delete</a></td>
+                        <td><a href="#" onClick="updateItem({{item.item_num}},'{{item.item_type}}', {{item.retail_price}}, {{item.quant_in_stock}})">Edit</a> / <a href="#" onClick="deleteItem({{item.item_num}})">Delete</a></td>
                         {% for key in Items[0].keys() %}
                         <td>{{item[key]}}</td>
                         {% endfor %}  
@@ -104,8 +107,8 @@
 			<legend><strong>Add Item</strong></legend>
             <fieldset>
                 <!-- placeholder shows ghost text, required forces an input, pattern forces input adherence -->
-                <label for="make">Item Number:</label>
-                <input type="text" class="form-control" id="iNum" name="iNum" pattern="[0-9]+" placeholder="Number id" required>
+                <!--<label for="make">Item Number:</label>
+                <input type="text" class="form-control" id="iNum" name="iNum" pattern="[0-9]+" placeholder="Number id" required>-->
     
                 <label for="make">Item Type:</label>
                 <input type="text" class="form-control" id="iType" name="iType" placeholder="Item Category" required>
@@ -141,16 +144,16 @@
             <fieldset>
                 <!-- placeholder shows ghost text, required forces an input, pattern forces input adherence -->
                 
-                <input type="hidden" class="form-control" id="update_item_num" name="iNum" pattern="[0-9]+" placeholder="Number id" required>
+                <input type="hidden" class="form-control" id="update_item_num" name="iNum" pattern="[0-9]+" placeholder="" required>
     
                 <label for="make">Item Type:</label>
-                <input type="text" class="form-control" id="update_item_type" name="iType" placeholder="Item Category" required>
+                <input type="text" class="form-control" id="update_item_type" name="iType" placeholder="" required>
     
                 <label for="model">Retail Price:</label>
-                <input type="text" class="form-control" id="update_item_price" name="rPrice" pattern="[0-9.]+" placeholder="Price with two decimals" required>
+                <input type="text" class="form-control" id="update_item_price" name="rPrice" pattern="[0-9.]+" placeholder="" required>
     
                 <label for="color">Quantity in Stock</label>
-                <input type="text" class="form-control" id="update_item_quant" name="qStock" pattern="[0-9]+" placeholder="Quantity" required>
+                <input type="text" class="form-control" id="update_item_quant" name="qStock" pattern="[0-9]+" placeholder="" required>
             </fieldset>
             <input type="submit" value="Save Changes" name="Edit_Item" class="btn btn-primary" style="margin:.5rem;">
 				<input class="btn" type="button" value="Cancel" onClick="browsePeople()" style="margin:.5rem;"> 

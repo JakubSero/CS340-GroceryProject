@@ -1,9 +1,10 @@
-<link rel="stylesheet" type="text/css" href="../static/style1.css">
+<!DOCTYPE html>
+<html lang="en">
 <head>
 	<title>Customers</title>
-	<!-- <link href="style.css" rel="stylesheet" type="text/css" /> -->
+    <link rel="stylesheet" type="text/css" href="../static/style1.css">
 	<script language="JavaScript">
-	function showform(dowhat) {
+	function showform(dowhat, id) {
 		/*
 		 * four DIVS: browse, insert, update, delete
 		 * this function sets one visible the others not
@@ -12,23 +13,20 @@
 			document.getElementById('browse').style.display = 'none';
 			document.getElementById('insert').style.display = 'block';
 			document.getElementById('edit').style.display = 'none';
-			document.getElementById('delete').style.display = 'none';
-		} else if(dowhat == 'all') {
+		}else if(dowhat == 'all') {
 			document.getElementById('browse').style.display = 'block';
 			document.getElementById('insert').style.display = 'block';
 			document.getElementById('edit').style.display = 'block';
-			document.getElementById('delete').style.display = 'block';
 		} else { //by default display browse
 			document.getElementById('browse').style.display = 'block';
 			document.getElementById('insert').style.display = 'none';
 			document.getElementById('edit').style.display = 'none';
-			document.getElementById('delete').style.display = 'none';
 		}
 	}
 	function newCustomer() {
 		showform('insert');
 	}
-	function browseCustomers() {
+	function browsePeople() {
 		showform('browse');
 	}
 	function showAll() {
@@ -36,85 +34,79 @@
 	}
 	</script>
 </head>
-<body onload="browseCustomers()">
-    <nav>[ <a href="/">Homepage</a> | <a href="/customers/">Customers</a> | <a href="/orders">Orders</a> | <a href="/receipts">Receipts</a> | <a href="/items">Items</a> | <a href="/order_items">Order_Items</a> | <a href="/receipt_items">Receipt_Items</a>]</nav><hr>
-    <div id="browse">
-        <h1 class="com-name">Customers</h1>
-        <table border = "1" cellpadding="5">
-        <tbody>
-            <tr>
-                {% for key in Customers[0].keys() %}
-                <th>{{key}}</th>
-                {% endfor %}
-		
-            </tr>
-            <tr>
-                <td>1</td>
-                <td>Jeffery</td>
-                <td>Zoll</td>
-                <td>3946 Stratford Drive</td>
-                <td>Waipahu</td>
-                <td>HI</td>
-                <td>96797</td>
-                <td>808-205-3645</td>
-            </tr>
-            <tr>
-                <td>2</td>
-                <td>Vera</td>
-                <td>Hughes</td>
-                <td>147 Oak Street</td>
-                <td>Syracuse</td>
-                <td>NY</td>
-                <td>13022</td>
-                <td>315-728-4964</td>
-            </tr>
-            <tr>
-                <td>3</td>
-                <td>William</td>
-                <td>Lewis</td>
-                <td>4409 Apple Lane</td>
-                <td>Holdrege</td>
-                <td>NE</td>
-                <td>68949</td>
-                <td>308-995-8712</td>
-            </tr>
-        </tbody>
 
-    
-        </table>
-        <br>
-        <input2>
-            <input type="submit" value="Add Customer" name="Create_Customer" onClick="newCustomer()">
-        </input2>
-    </div>
-    <div id="insert" style="display: none">
-        <form id="insert" action="/customers" method="post">
-            <legend><strong>Add Customer</strong></legend>
-            <fieldset>
-                <label>First Name</label>
-                <input type="text" class="form-control" id="fname" name="fname" pattern="[A-Za-z0-9]{1,45}" placeholder="first name" required>
+<body onload="browsePeople()">
+    <form>
+        <nav>[ <a href="/">Homepage</a> | <a href="/customers">Customers</a> | <a href="/orders">Orders</a> | <a href="/receipts">Receipts</a> | <a href="/items">Items</a> | <a href="/order_items">Order_Items</a> | <a href="/receipt_items">Receipt_Items</a>]</nav>
+    </form>
+    <hr>
+	<div id="browse">
+            <!-- <p>Customers</p> -->
+            <div>
+                <table border = "1" cellpadding="5">
+                    <h1 class="com-name">Customers</h1>
+                    <tdead>
+                        <tr>
+                            {% for key in Customers[0].keys() %}
+                            <th>{{key}}</th>
+                            {% endfor %}                             
 
-                <label>Last Name</label>
-                <input type="text" class="form-control" id="lname" name="lname" pattern="[A-Za-z0-9]{1,45}" placeholder="last name" required>
 
-                <label>Street</label>
-                <input type="text" class="form-control" id="street" name="street" pattern="[A-Za-z0-9-]{1,45}" placeholder="Street address" required>
+                        </tr>
+                    </tdead>
+                    <tbody>
+                    {% for customers in Customers %}
+                    <tr>
+                        {% for key in Customers[1].keys() %}
+                        <td>{{customers[key]}}</td>
+                        {% endfor %}  
 
-                <label>City</label>
-                <input type="text" class="form-control" id="city" name="city" pattern="[A-Za-z0-9]{1,45}" placeholder="City name" required>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                <br>
+                <input2>
+                <input type="submit" value="Add Customer" name="Edit_Customer" onClick="newCustomer()">
+            </input2>
+            </div>
 
-                <label>State</label>
-                <input type="text" class="form-control" id="state" name="state" pattern="[A-Za-z0-9]{2}" placeholder="Two letter abbreviation" required>
+	</div>	<!-- browse -->
 
-                <label>Zipcode</label>
-                <input type="text" class="form-control" id="zip" name="zip" pattern="[0-9-]{1,10}" placeholder="01234 or 01234-1234" required>
+	<div id="insert">
+		<!-- form to INSERT new data-->
+		<form id="insertCustomer" action="/insert_customer" method="post">
+			<legend><strong>Add Customer</strong></legend>
+                <fieldset>
 
-                <label>Phone Number</label>
-                <input type="text" class="form-control" id="phonenum" name="phonenum" pattern="[0-9-]{1,45}" placeholder="123-123-1234" required>
-            </fieldset>
-            <input type="submit" value="Add Customer" name="Add_Customer" class="btn btn-primary" style="margin:.5rem;">
-			<input class="btn" type="button" value="Cancel" onClick="browseCustomers()"> 
+                    <label for="make">Customer Number:</label>
+                    <input type="text" class="form-control" id="customer_num" name="customer_num" pattern="[0-9]+" placeholder="Number id" required>
+
+                    <label for="make">First Name:</label>
+                    <input type="text" class="form-control" id="customer_first_name" name="customer_first_name" placeholder="" required>
+
+                    <label for="make">Last Name:</label>
+                    <input type="text" class="form-control" id="customer_last_name" name="customer_last_name" placeholder="" required>
+
+                    <label for="make">Mailing Address:</label>
+                    <input type="text" class="form-control" id="customer_street" name="customer_street" placeholder="" required>
+
+                    <label for="make">City:</label>
+                    <input type="text" class="form-control" id="customer_city" name="customer_city" placeholder="" required>
+
+                    <label for="make">State:</label>
+                    <input type="text" class="form-control" id="customer_state" name="customer_state" placeholder="" required>
+
+                    <label for="make">Zip Code:</label>
+                    <input type="text" class="form-control" id="customer_zip" name="customer_zip" placeholder="" required>
+
+                    <label for="make">Phone Number:</label>
+                    <input type="text" class="form-control" id="customer_phone" name="customer_phone" placeholder="" required>
+                </fieldset>
+
+            <!-- Create 'Add Person' and 'Cancel' buttons -->
+			<input type="submit" value="Add Customer" name="Add_Customer" class="btn btn-primary" style="margin:.5rem;">
+			<input class="btn" type="button" value="Cancel" onClick="browsePeople()"> 
         </form>
-
-    </div>
 </body>
+</html>

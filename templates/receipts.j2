@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Receipts</title>
+    <link rel="stylesheet" type="text/css" href="../static/style1.css">
+	<script language="JavaScript">
+	function showform(dowhat, id, day, items, price, fk) {
+		/*
+		 * four DIVS: browse, insert, update, delete
+		 * this function sets one visible the others not
+		 */
+		if(dowhat == 'insert') {
+			document.getElementById('browse').style.display = 'none';
+			document.getElementById('insert').style.display = 'block';
+			document.getElementById('edit').style.display = 'none';
+		} else if(dowhat == 'update') {
+                        document.getElementById('browse').style.display = 'none';
+			document.getElementById('edit').style.display = 'block';
+			document.getElementById('update_receipt_num').value=id;
+                        document.getElementById('update_receipt_date').value=day;
+                        document.getElementById('update_receipt_items').value=items;
+                        document.getElementById('update_receipt_price').value=price;
+                        document.getElementById('update_receipt_fk').value=fk;
+		} else if(dowhat == 'all') {
+			document.getElementById('browse').style.display = 'block';
+			document.getElementById('insert').style.display = 'block';
+			document.getElementById('edit').style.display = 'block';
+			document.getElementById('delete').style.display = 'block';
+		} else { //by default display browse
+			document.getElementById('browse').style.display = 'block';
+			document.getElementById('insert').style.display = 'none';
+			document.getElementById('edit').style.display = 'none';
+			document.getElementById('delete').style.display = 'none';
+		}
+	}
+	function newReceipt() {
+		showform('insert');
+	}
+	function updateReceipt(receipt_id, day, items, price, fk) {
+		showform('update', receipt_id, day, items, price, fk);       
+        }
+	function browsePeople() {
+		showform('browse');
+	}
+	function showAll() {
+		showform('all');
+	}
+        
+	</script>
+</head>
+
+<body onload="browsePeople()">
+    <form>
+        <nav>[ <a href="/">Homepage</a> | <a href="/customers">Customers</a> | <a href="/orders">Orders</a> | <a href="/receipts">Receipts</a> | <a href="/items">Items</a> | <a href="/order_items">Order_Items</a> | <a href="/receipt_items">Receipt_Items</a>]</nav>
+    </form>
+    <hr>
+	<div id="browse">
+            <!-- <p>Items List</p> -->
+            <div>
+                <table border = "1" cellpadding="5">
+                    <h1 class="com-name">Receipts</h1>
+                    <tdead>
+                        <tr>
+                            <th>Edit/Delete</th>
+                            {% for key in Receipts[0].keys() %}
+                            <th>{{key}}</th>
+                            {% endfor %}                             
+
+
+                        </tr>
+                    </tdead>
+                    <tbody>
+                    {% for receipt in Receipts %}
+                    <tr>
+                        <td><a href="#" onClick="updateReceipt({{receipt.receipt_id}}, '{{receipt.purchase_date}}', '{{receipt.items_purchased}}', {{receipt.price_paid}}, {{receipt.f_customer_num}})">Edit</a></td>
+                        {% for key in Receipts[0].keys() %}
+                        <td>{{receipt[key]}}</td>
+                        {% endfor %}  
+
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                <br>
+                <input2>
+                <input type="submit" value="Add receipt" name="Edit_Receipt" onClick="newReceipt()">
+            </input2>
+            </div>
+
+	</div>	<!-- browse -->
+
+	<div id="insert">
+		<!-- form to INSERT new data-->
+		<form id="insertReceipt" action="/insert_receipt" method="post">
+			<legend><strong>Add Receipt</strong></legend>
+            <fieldset>
+                <!-- placeholder shows ghost text, required forces an input, pattern forces input adherence -->
+
+                <label>Customer Phone</label>
+                <select type="text" class="form-control" method="GET" action="/" id="customer_phone" name="customer_phone" placeholder="xxx-xxx-xxxx" required>
+                    <option value="{{Dropdown[0]['customer_num']}}" selected> {{Dropdown[0]['Phone']}}</option>
+                    {% for result in Dropdown[1:] %}
+                        <option value="{{result['customer_num']}}">{{result['Phone']}}</option>
+                    {% endfor %}
+                </select>
+
+                <input type="hidden" class="form-control" id="receipt_id" name="receipt_id" pattern="[0-9]+" placeholder="" required>
+
+                <label for="make">Purchase Date:</label>
+                <input type="text" class="form-control" id="purchase_date" name="purchase_date" placeholder="yyyy-mm-dd" required>
+
+                <label for="model">Items Purchased:</label>
+                <input type="text" class="form-control" id="items_purchased" name="items_purchased" pattern="[A-Za-z\p{P}- ]+" placeholder="" required>
+
+                <label for="color">Price Paid</label>
+                <input type="text" class="form-control" id="price_paid" name="price_paid" pattern="[0-9.]+" placeholder="9.99" required>
+
+            </fieldset>
+
+            <!-- Create 'Add Person' and 'Cancel' buttons -->
+			<input type="submit" value="Add Receipt" name="Add_Receipt" class="btn btn-primary" style="margin:.5rem;">
+			<input class="btn" type="button" value="Cancel" onClick="browsePeople()"> 
+        </form>
+	</div><!--insert-->
+    <!--insert-->
+	<div id="edit">
+		<!-- form to edit data in bsg_people-->
+		<form id="edit_receipt" action="/edit_receipt" method="POST">
+			<legend><strong>Edit Item</strong></legend>
+            <fieldset>
+                    <!-- placeholder shows ghost text, required forces an input, pattern forces input adherence -->
+                    <label>Customer Phone</label>
+                <select type="text" class="form-control" id="update_receipt_fk" method="GET" action="/" name="customer_phone" placeholder="xxx-xxx-xxxx" required>
+                    {% for result in Dropdown[0:] %}
+                        <option value="{{result['customer_num']}}">{{result['Phone']}}</option>
+                    {% endfor %}
+                </select>
+
+                    <input type="hidden" class="form-control" id="update_receipt_num" name="receipt_id" pattern="[0-9]+" placeholder="" required>
+
+                    <label for="make">Purchase Date:</label>
+                    <input type="text" class="form-control" id="update_receipt_date" name="purchase_date" pattern="[0-9-]{1,45}" placeholder="" required>
+
+                    <label for="model">Items Purchased:</label>
+                    <input type="text" class="form-control" id="update_receipt_items" name="items_purchased" pattern="[A-Za-z\p{P} ]+" placeholder="" required>
+
+                    <label for="color">Price Paid</label>
+                    <input type="text" class="form-control" id="update_receipt_price" name="price_paid" pattern="[0-9.]+" placeholder="" required>
+
+
+                </fieldset>
+            <input type="submit" value="Save Changes" name="Edit_Item" class="btn btn-primary" style="margin:.5rem;">
+				<input class="btn" type="button" value="Cancel" onClick="browsePeople()" style="margin:.5rem;"> 
+        </form>
+	</div><!--edit-->
+</body>
+</html>
