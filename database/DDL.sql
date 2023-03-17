@@ -28,7 +28,7 @@ CREATE OR REPLACE TABLE Receipts (
 CREATE OR REPLACE TABLE Orders (
   order_num INT(11) NOT NULL UNIQUE AUTO_INCREMENT,
   order_date DATE NOT NULL,
-  card_number VARCHAR(16) NOT NULL UNIQUE,
+  card_number VARCHAR(16) NOT NULL,
   expiration_month SMALLINT NOT NULL,
   expiration_year SMALLINT NOT NULL,
   order_complete TINYINT UNSIGNED NOT NULL DEFAULT 0,
@@ -97,7 +97,7 @@ VALUES
 INSERT INTO Items (item_num, item_type, retail_price, quant_in_stock) 
 VALUES 
 ('4568', 'Fruit', '63.25', '100'), 
-('9874', 'Fruit', '666.66', '200'), 
+('9874', 'Potato', '666.66', '200'), 
 ('32154', 'Vehicle', '568.25', '300');
 
 INSERT INTO Receipt_Items (f_receipt_id, f_item_num) 
