@@ -6,17 +6,6 @@ import database.db_connector as db
 
 app = Flask(__name__)
 
-#app.config['MYSQL_HOST'] = 'classmysql.engr.oregonstate.edu'
-#app.config['MYSQL_USER'] = 'cs340_kowaljak'
-#app.config['MYSQL_PASSWORD'] = '2811' #last 4 of onid
-#app.config['MYSQL_DB'] = 'cs340_kowaljak'
-#app.config['MYSQL_CURSORCLASS'] = "DictCursor"
-
-
-#mysql = MySQL(app)
-
-#db_connection = db.connect_to_database()
-
 # Routes
 @app.route('/')
 def root():
@@ -26,7 +15,7 @@ def root():
 def customers():
         db_connection = db.connect_to_database()
 
-        query = "SELECT * FROM Customers;"
+        query = "SELECT customer_num AS 'Customer Number', customer_first_name AS 'First Name', customer_last_name AS 'Last Name', customer_street AS 'Street Address', customer_city AS City, customer_state AS State, customer_zip AS 'Zip Code', customer_phone AS 'Phone Number' FROM Customers;"
         cursor = db.execute_query(db_connection=db_connection, query=query)
         results = cursor.fetchall()
         cursor.close()
@@ -46,7 +35,7 @@ def create_customer():
     customer_zip = request.form["customer_zip"]
     customer_phone = request.form["customer_phone"]
 
-    query = f"INSERT INTO Customers (customer_num, customer_first_name, customer_last_name, customer_street, customer_city, customer_state, customer_zip, customer_phone) VALUES ({customer_num}, '{customer_first_name}', '{customer_last_name}', '{customer_street}', '{customer_city}', '{customer_state}', '{customer_zip}', '{customer_phone}');"
+    query = f"INSERT INTO Customers (customer_first_name, customer_last_name, customer_street, customer_city, customer_state, customer_zip, customer_phone) VALUES ('{customer_first_name}', '{customer_last_name}', '{customer_street}', '{customer_city}', '{customer_state}', '{customer_zip}', '{customer_phone}');"
     try:
         db.execute_query(db_connection=db_connection, query=query)
         db_connection.close()
@@ -61,7 +50,7 @@ def create_customer():
 def orders():
     if request.method == "GET":
         db_connection = db.connect_to_database()
-        query = "SELECT Orders.order_num, Orders.order_date, Orders.card_number, Orders.expiration_year, Orders.expiration_month, Orders.order_complete, Orders.pickup_or_ship, Customers.customer_phone FROM Orders JOIN Customers ON Orders.f_customer_num = Customers.customer_num;"
+        query = "SELECT Orders.order_num AS 'Order Num', Orders.order_date AS 'Order Date', Orders.card_number AS 'Card Number', Orders.expiration_year AS 'Card Expiration Year', Orders.expiration_month AS 'Card Expiration Month', Orders.order_complete AS 'Completion Status', Orders.pickup_or_ship AS 'PickedUp Or Shipped', Customers.customer_phone AS 'Customer Phone' FROM Orders JOIN Customers ON Orders.f_customer_num = Customers.customer_num;"
         cursor = db.execute_query(db_connection=db_connection, query=query)
         results = cursor.fetchall() 
         cursor.close()
@@ -90,12 +79,12 @@ def receipts():
     try:
         if request.method == "GET":
             db_connection = db.connect_to_database()
-            query = "SELECT * FROM Receipts;"
+            query = "SELECT receipt_id AS 'Receipt Id', purchase_date AS 'Purchase Date', items_purchased AS 'Items Purchased', price_paid AS 'Price', f_customer_num AS 'Customer Number' FROM Receipts;"
             cursor = db.execute_query(db_connection=db_connection, query=query)
             results = cursor.fetchall()
             cursor.close()
             
-            query2 = "SELECT Customers.customer_num, Customers.customer_phone AS Phone FROM Customers;"
+            query2 = "SELECT customer_num, customer_phone AS Phone FROM Customers;"
             cursor = db.execute_query(db_connection=db_connection, query=query2)
             results2 = cursor.fetchall()
             cursor.close()
@@ -153,7 +142,7 @@ def edit_receipt():
 def items():
     if request.method == "GET":
         db_connection = db.connect_to_database()
-        query = "SELECT * FROM Items;"
+        query = "SELECT item_num AS 'Item Number', item_type AS 'Item Type', retail_price AS 'Retail Price', quant_in_stock AS 'Quantity Available' FROM Items;"
         cursor = db.execute_query(db_connection=db_connection, query=query)
         results = cursor.fetchall()
         cursor.close()
@@ -214,19 +203,49 @@ def edit_people():
 def order_items():
     if request.method == "GET":
         db_connection = db.connect_to_database()
-        query = "SELECT * FROM Order_Items;"
+        query = "SELECT f_order_num AS 'Order Number', f_item_num AS 'Item Number' FROM Order_Items;"
         cursor = db.execute_query(db_connection=db_connection, query=query)
         results = cursor.fetchall()
         cursor.close()
+        
+        db_connection = db.connect_to_database()
+        query2 = "SELECT item_num FROM Items;"
+        cursor = db.execute_query(db_connection=db_connection, query=query2)
+        results2 = cursor.fetchall()
+        cursor.close()
+
+        db_connection = db.connect_to_database()
+        query3 = "SELECT order_num FROM Orders;"
+        cursor = db.execute_query(db_connection=db_connection, query=query3)
+        results3 = cursor.fetchall()
+        cursor.close()
         db_connection.close()
 
-    return render_template("order_items.j2", O_I=results)
+    return render_template("order_items.j2", O_I=results, Dropdown=results2, Dropdown2=results3)
+
+@app.route('/insert_order_item', methods=["POST"])
+def insert_order_item():
+    db_connection = db.connect_to_database()
+    order = request.form["order"]
+    item = request.form["item"]
+    query = f"INSERT INTO Order_Items (f_order_num, f_item_num) VALUES ({order}, {item});"
+
+    try:
+        db.execute_query(db_connection=db_connection, query=query)
+        db_connection.close()
+
+        return redirect("/order_items")
+    except Exception as e:
+        db_connection.rollback()
+        db_connection.close()
+
+        return "Error creating item: " + str(e)
 
 @app.route('/receipt_items', methods=['GET'])
 def receipt_items():
     if request.method == "GET":
         db_connection = db.connect_to_database()
-        query = "SELECT * FROM Receipt_Items;"
+        query = "SELECT f_receipt_id AS 'Receipt Id', f_item_num AS 'Item Number' FROM Receipt_Items;"
         cursor = db.execute_query(db_connection=db_connection, query=query)
         results = cursor.fetchall()
         cursor.close()
