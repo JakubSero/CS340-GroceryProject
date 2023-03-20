@@ -95,11 +95,11 @@
                     <option value="1">Shipped</option>
                 </select>
 
-                <label>Customer Phone</label>
+                <label>Customer Phone (Customer Id Number)</label>
                 <select type="text" class="form-control" method="GET" action="/" id="customer_phone" name="customer_phone" placeholder="xxx-xxx-xxxx" required>
-                    <option value="{{Dropdown[0]['customer_num']}}" selected> {{Dropdown[0]['Phone']}}</option>
+                    <option value="{{Dropdown[0]['customer_num']}}" selected> {{Dropdown[0]['Phone']}} ({{Dropdown[0]['customer_num']}})</option>
                     {% for result in Dropdown[1:] %}
-                        <option value="{{result['customer_num']}}">{{result['Phone']}}</option>
+                        <option value="{{result['customer_num']}}">{{result['Phone']}} ({{result['customer_num']}})</option>
                     {% endfor %}
                 </select>
             </fieldset>

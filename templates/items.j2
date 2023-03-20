@@ -84,7 +84,7 @@
                     <tbody>
                     {% for item in Items %}
                     <tr>
-                        <td><a href="#" onClick="updateItem({{item.item_num}},'{{item.item_type}}', {{item.retail_price}}, {{item.quant_in_stock}})">Edit</a> / <a href="#" onClick="deleteItem({{item.item_num}})">Delete</a></td>
+                        <td><a href="#" onClick="updateItem({{item['Item Number']}},'{{item['Item Type']}}', {{item['Retail Price']}}, {{item['Quantity Available']}})">Edit</a> / <a href="#" onClick="deleteItem({{item['Item Number']}})">Delete</a></td>
                         {% for key in Items[0].keys() %}
                         <td>{{item[key]}}</td>
                         {% endfor %}  

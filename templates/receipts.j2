@@ -72,7 +72,11 @@
                     <tbody>
                     {% for receipt in Receipts %}
                     <tr>
-                        <td><a href="#" onClick="updateReceipt({{receipt.receipt_id}}, '{{receipt.purchase_date}}', '{{receipt.items_purchased}}', {{receipt.price_paid}}, {{receipt.f_customer_num}})">Edit</a></td>
+                        {% if not receipt['Customer Number'] %}
+                        <td><a href="#" onClick="updateReceipt({{receipt['Receipt Id']}}, '{{receipt['Purchase Date']}}', '{{receipt['Items Purchased']}}', {{receipt['Price']}})">Edit</a></td>
+                        {% else %}
+                        <td><a href="#" onClick="updateReceipt({{receipt['Receipt Id']}}, '{{receipt['Purchase Date']}}', '{{receipt['Items Purchased']}}', {{receipt['Price']}}, {{receipt['Customer Number']}})">Edit</a></td>
+                        {% endif %}
                         {% for key in Receipts[0].keys() %}
                         <td>{{receipt[key]}}</td>
                         {% endfor %}  
@@ -96,11 +100,12 @@
             <fieldset>
                 <!-- placeholder shows ghost text, required forces an input, pattern forces input adherence -->
 
-                <label>Customer Phone</label>
+                <label>Customer Phone (Customer Id Number)</label>
                 <select type="text" class="form-control" method="GET" action="/" id="customer_phone" name="customer_phone" placeholder="xxx-xxx-xxxx" required>
-                    <option value="{{Dropdown[0]['customer_num']}}" selected> {{Dropdown[0]['Phone']}}</option>
+                <option value="NULL" selected>NULL (0)</option>    
+                <option value="{{Dropdown[0]['customer_num']}}"> {{Dropdown[0]['Phone']}} ({{Dropdown[0]['customer_num']}})</option>
                     {% for result in Dropdown[1:] %}
-                        <option value="{{result['customer_num']}}">{{result['Phone']}}</option>
+                        <option value="{{result['customer_num']}}">{{result['Phone']}} ({{result['customer_num']}})</option>
                     {% endfor %}
                 </select>
 
@@ -129,10 +134,11 @@
 			<legend><strong>Edit Receipt</strong></legend>
             <fieldset>
                     <!-- placeholder shows ghost text, required forces an input, pattern forces input adherence -->
-                    <label>Customer Phone</label>
+                    <label>Customer Phone (Customer Id Number)</label>
                 <select type="text" class="form-control" id="update_receipt_fk" method="GET" action="/" name="customer_phone" placeholder="xxx-xxx-xxxx" required>
+                    <option value="NULL">NULL (0)</option>
                     {% for result in Dropdown[0:] %}
-                        <option value="{{result['customer_num']}}">{{result['Phone']}}</option>
+                        <option value="{{result['customer_num']}}">{{result['Phone']}} ({{result['customer_num']}})</option>
                     {% endfor %}
                 </select>
 
